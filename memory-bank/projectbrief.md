@@ -12,13 +12,14 @@ childcare-support-dashboardは、子育て支援のためのダッシュボー�
 
 ## 技術スタック
 
-- Deno
 - TypeScript
+- Cloudflare Workers
 - SwitchBot API
 - OpenWeatherMap API
 - MySQL
 - Grafana
-- Cloudflare Workers
+- (Deno)
+  - 実験的なスクリプトの実装に利用
 
 ## コアコンポーネント
 
