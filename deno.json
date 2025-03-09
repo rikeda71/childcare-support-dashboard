@@ -7,7 +7,7 @@
     "std/": "https://deno.land/std@0.208.0/"
   },
   "tasks": {
-    "start": "deno run --allow-net api-client.ts"
+    "start": "deno run --unstable-temporal --allow-net --allow-read --allow-env experimental/switchbot-api-call.ts"
   },
   "fmt": {
     "indentWidth": 2,
