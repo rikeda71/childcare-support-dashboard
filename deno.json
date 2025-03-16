@@ -7,7 +7,9 @@
     "std/": "https://deno.land/std@0.208.0/"
   },
   "tasks": {
-    "start": "deno run --unstable-temporal --allow-net --allow-read --allow-env experimental/switchbot-api-call.ts"
+    "start": "deno run --unstable-temporal --allow-net --allow-read --allow-env experimental/switchbot-api-call.ts",
+    "weather": "deno run --allow-net --allow-read --allow-env experimental/weather-api-call.ts",
+    "weather-takamatsu": "deno run --allow-net --allow-read --allow-env experimental/weather-api-call.ts --lat 34.34053 --lon 134.113145"
   },
   "fmt": {
     "indentWidth": 2,
