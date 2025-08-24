@@ -1,0 +1,22 @@
+name = "weather-collector"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Cron設定: 毎時0分に実行
+[triggers]
+crons = ["0 * * * *"]
+
+# D1データベース設定
+[[d1_databases]]
+binding = "DB"
+database_name = "childcare-dashboard"
+# database_id = "YOUR_DATABASE_ID" # 実際のデプロイ時に設定
+
+# 環境変数（開発用のデフォルト値）
+[vars]
+WEATHER_LATITUDE = "35.6762"   # 東京の緯度
+WEATHER_LONGITUDE = "139.6503"  # 東京の経度
+LOCATION_NAME = "Tokyo"
+
+# 本番環境の秘密情報は wrangler secret で設定
+# wrangler secret put OPENWEATHER_API_KEY

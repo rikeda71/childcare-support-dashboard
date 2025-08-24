@@ -1,6 +1,9 @@
 {
   "deno.enable": true,
   "deno.lint": true,
+  "deno.unstable": false,
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.references": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
   "editor.tabSize": 2,

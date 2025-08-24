@@ -1,22 +1,24 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true
+  "tasks": {
+    "test": "deno test --allow-all",
+    "fmt": "deno fmt",
+    "lint": "deno lint",
+    "check": "deno check **/*.ts"
   },
   "imports": {
-    "std/": "https://deno.land/std@0.208.0/"
-  },
-  "tasks": {
-    "start": "deno run --unstable-temporal --allow-net --allow-read --allow-env experimental/switchbot-api-call.ts",
-    "weather": "deno run --allow-net --allow-read --allow-env experimental/weather-api-call.ts",
-    "weather-takamatsu": "deno run --allow-net --allow-read --allow-env experimental/weather-api-call.ts --lat 34.34053 --lon 134.113145"
+    "@std/": "https://deno.land/std@0.224.0/"
   },
   "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
     "indentWidth": 2,
+    "semiColons": true,
     "singleQuote": false,
-    "semiColons": true
+    "proseWrap": "preserve",
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.md", "**/*.json"]
   },
   "lint": {
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     "rules": {
       "tags": ["recommended"]
     }
