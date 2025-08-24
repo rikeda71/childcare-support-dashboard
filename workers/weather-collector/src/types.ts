@@ -8,7 +8,6 @@ export interface Env {
   readonly OPENWEATHER_API_KEY: string;
   readonly WEATHER_LATITUDE: string;
   readonly WEATHER_LONGITUDE: string;
-  readonly LOCATION_NAME?: string;
 }
 
 /**
@@ -17,5 +16,4 @@ export interface Env {
 export interface WeatherConfig {
   readonly latitude: number;
   readonly longitude: number;
-  readonly locationName: string;
 }

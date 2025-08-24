@@ -49,14 +49,14 @@
 ## プロダクトロードマップ
 
 ### フェーズ1：基盤構築（現在）
-- [ ] SwitchBot APIクライアント実装
-- [ ] OpenWeatherMap API統合
-- [ ] Cloudflare D1データベース設計
-- [ ] 基本的なデータ収集パイプライン
+- [ ] SwitchBot APIクライアント実装（5分ごと収集）
+- [x] OpenWeatherMap API統合（1時間ごと収集）
+- [x] Cloudflare D1データベース設計
+- [x] 基本的なデータ収集パイプライン
 
 ### フェーズ2：データ統合
-- [ ] ぴよログデータ取り込み
-- [ ] Google Drive同期
+- [ ] ぴよログ自動エクスポート（ADB/XCUITest検討）
+- [ ] Google Drive同期（10分ごと取得）
 - [ ] データ正規化と統合
 
 ### フェーズ3：可視化と分析

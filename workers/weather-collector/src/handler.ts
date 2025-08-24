@@ -82,6 +82,5 @@ export const parseWeatherConfig = (env: Env): Result<WeatherConfig> => {
   return ok({
     latitude,
     longitude,
-    locationName: env.LOCATION_NAME || `${latitude.toFixed(4)},${longitude.toFixed(4)}`,
   });
 };

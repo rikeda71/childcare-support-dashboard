@@ -12,8 +12,8 @@ export const insertWeather = (
 ): Promise<Result<void>> =>
   tryCatch(async () => {
     const query = `
-      INSERT INTO weather_data (
-        timestamp, location_id, latitude, longitude,
+      INSERT INTO weathers (
+        timestamp, latitude, longitude,
         temperature, feels_like, temp_min, temp_max,
         humidity, pressure, wind_speed, wind_deg,
         weather_main, weather_description, visibility, cloudiness,
@@ -25,7 +25,6 @@ export const insertWeather = (
       .prepare(query)
       .bind(
         weather.timestamp,
-        weather.locationId,
         weather.latitude,
         weather.longitude,
         weather.temperature,
@@ -56,7 +55,7 @@ export const fetchLatestWeather = (
 ): Promise<Result<Weather | null>> =>
   tryCatch(async () => {
     const query = `
-      SELECT * FROM weather_data
+      SELECT * FROM weathers
       WHERE location_id = ?
       ORDER BY timestamp DESC
       LIMIT 1
@@ -81,9 +80,8 @@ export const fetchWeatherByTimeRange = (
 ): Promise<Result<Weather[]>> =>
   tryCatch(async () => {
     const query = `
-      SELECT * FROM weather_data
-      WHERE location_id = ?
-        AND timestamp BETWEEN ? AND ?
+      SELECT * FROM weathers
+      WHERE timestamp BETWEEN ? AND ?
       ORDER BY timestamp DESC
     `;
 
@@ -107,7 +105,7 @@ export const deleteOldWeatherRecords = (
     const cutoffTimeMs = Date.now() - olderThanDays * 24 * 60 * 60 * 1000;
 
     const result = await db
-      .prepare("DELETE FROM weather_data WHERE timestamp < ?")
+      .prepare("DELETE FROM weathers WHERE timestamp < ?")
       .bind(cutoffTimeMs)
       .run();
 
@@ -119,7 +117,6 @@ export const deleteOldWeatherRecords = (
  */
 const convertRecordToWeather = (record: WeatherRecord): Weather => ({
   timestamp: record.timestamp,
-  locationId: record.location_id,
   latitude: record.latitude,
   longitude: record.longitude,
   temperature: record.temperature,

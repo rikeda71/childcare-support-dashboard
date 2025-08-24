@@ -58,7 +58,7 @@ interface Env {
 
 #### D1スキーマ設計
 ```sql
-CREATE TABLE weather_data (
+CREATE TABLE weathers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   timestamp INTEGER NOT NULL,
   location_id TEXT NOT NULL,
@@ -237,5 +237,4 @@ database_id = "xxx-xxx-xxx"
 [vars]
 WEATHER_LATITUDE = "35.6762"   # 東京の緯度
 WEATHER_LONGITUDE = "139.6503"  # 東京の経度
-LOCATION_NAME = "Tokyo"         # 場所の識別名
 ```

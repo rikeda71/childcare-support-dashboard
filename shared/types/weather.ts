@@ -51,7 +51,6 @@ export interface OpenWeatherResponse {
  */
 export interface Weather {
   timestamp: number;
-  locationId: string;
   latitude: number;
   longitude: number;
   temperature: number;

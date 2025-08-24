@@ -56,10 +56,8 @@ export const fetchWeather = async (
  */
 export const transformWeatherResponse = (
   response: OpenWeatherResponse,
-  locationId: string,
 ): Weather => ({
   timestamp: response.dt * 1000, // Unix秒をミリ秒に変換
-  locationId,
   latitude: response.coord.lat,
   longitude: response.coord.lon,
   temperature: response.main.temp,

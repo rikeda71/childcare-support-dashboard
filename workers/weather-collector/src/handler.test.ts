@@ -6,7 +6,6 @@ Deno.test("parseWeatherConfig parses valid coordinates", () => {
   const mockEnv = {
     WEATHER_LATITUDE: "35.6762",
     WEATHER_LONGITUDE: "139.6503",
-    LOCATION_NAME: "Tokyo",
   } as Env;
 
   const result = parseWeatherConfig(mockEnv);
@@ -15,7 +14,6 @@ Deno.test("parseWeatherConfig parses valid coordinates", () => {
   if (result.ok) {
     assertEquals(result.value.latitude, 35.6762);
     assertEquals(result.value.longitude, 139.6503);
-    assertEquals(result.value.locationName, "Tokyo");
   }
 });
 
@@ -79,7 +77,6 @@ Deno.test("parseWeatherConfig handles boundary values", () => {
   const boundaryEnv = {
     WEATHER_LATITUDE: "-90",
     WEATHER_LONGITUDE: "180",
-    LOCATION_NAME: "South Pole",
   } as Env;
 
   const result = parseWeatherConfig(boundaryEnv);
@@ -88,6 +85,5 @@ Deno.test("parseWeatherConfig handles boundary values", () => {
   if (result.ok) {
     assertEquals(result.value.latitude, -90);
     assertEquals(result.value.longitude, 180);
-    assertEquals(result.value.locationName, "South Pole");
   }
 });
