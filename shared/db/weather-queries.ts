@@ -12,12 +12,12 @@ export const insertWeather = (
 ): Promise<Result<void>> =>
   tryCatch(async () => {
     const query = `
-      INSERT INTO weathers (
+      INSERT INTO weather (
         timestamp, latitude, longitude,
         temperature, feels_like, temp_min, temp_max,
         humidity, pressure, wind_speed, wind_deg,
         weather_main, weather_description, visibility, cloudiness,
-        sunrise, sunset, raw_data
+        sunrise, sunset
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
@@ -41,32 +41,8 @@ export const insertWeather = (
         weather.cloudiness,
         weather.sunrise || null,
         weather.sunset || null,
-        JSON.stringify(weather),
       )
       .run();
-  });
-
-/**
- * 指定地点の最新気象情報を取得する
- */
-export const fetchLatestWeather = (
-  db: D1Database,
-  locationId: string,
-): Promise<Result<Weather | null>> =>
-  tryCatch(async () => {
-    const query = `
-      SELECT * FROM weathers
-      WHERE location_id = ?
-      ORDER BY timestamp DESC
-      LIMIT 1
-    `;
-
-    const record = await db
-      .prepare(query)
-      .bind(locationId)
-      .first<WeatherRecord>();
-
-    return record ? convertRecordToWeather(record) : null;
   });
 
 /**
@@ -74,20 +50,19 @@ export const fetchLatestWeather = (
  */
 export const fetchWeatherByTimeRange = (
   db: D1Database,
-  locationId: string,
   startTimeMs: number,
   endTimeMs: number,
 ): Promise<Result<Weather[]>> =>
   tryCatch(async () => {
     const query = `
-      SELECT * FROM weathers
+      SELECT * FROM weather
       WHERE timestamp BETWEEN ? AND ?
       ORDER BY timestamp DESC
     `;
 
     const result = await db
       .prepare(query)
-      .bind(locationId, startTimeMs, endTimeMs)
+      .bind(startTimeMs, endTimeMs)
       .all<WeatherRecord>();
 
     return result.results.map(convertRecordToWeather);
@@ -105,7 +80,7 @@ export const deleteOldWeatherRecords = (
     const cutoffTimeMs = Date.now() - olderThanDays * 24 * 60 * 60 * 1000;
 
     const result = await db
-      .prepare("DELETE FROM weathers WHERE timestamp < ?")
+      .prepare("DELETE FROM weather WHERE timestamp < ?")
       .bind(cutoffTimeMs)
       .run();
 

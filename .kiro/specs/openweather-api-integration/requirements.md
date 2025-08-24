@@ -58,7 +58,7 @@ interface Env {
 
 #### D1スキーマ設計
 ```sql
-CREATE TABLE weathers (
+CREATE TABLE weather (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   timestamp INTEGER NOT NULL,
   location_id TEXT NOT NULL,

@@ -92,6 +92,4 @@ export interface WeatherRecord {
   cloudiness: number;
   sunrise?: number;
   sunset?: number;
-  raw_data: string;
-  created_at: number;
 }

@@ -1,5 +1,5 @@
 -- Weather data table
-CREATE TABLE IF NOT EXISTS weathers (
+CREATE TABLE IF NOT EXISTS weather (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   timestamp INTEGER NOT NULL,
   location_id TEXT NOT NULL,
@@ -19,10 +19,9 @@ CREATE TABLE IF NOT EXISTS weathers (
   cloudiness INTEGER,
   sunrise INTEGER,
   sunset INTEGER,
-  raw_data TEXT,
   created_at INTEGER DEFAULT (unixepoch())
 );
 
 -- Indexes for efficient queries
-CREATE INDEX IF NOT EXISTS idx_weathers_timestamp ON weathers(timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_weathers_created_at ON weathers(created_at);
+CREATE INDEX IF NOT EXISTS idx_weather_timestamp ON weather(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_weather_created_at ON weather(created_at);

@@ -272,13 +272,12 @@ export const insertWeatherData = async (
 ): Promise<Result<void>> => {
   try {
     const query = `
-      INSERT INTO weathers (
+      INSERT INTO weather (
         timestamp, latitude, longitude,
         temperature, feels_like, temp_min, temp_max,
         humidity, pressure, wind_speed, wind_deg,
-        weather_main, weather_description, visibility,
-        raw_data
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        weather_main, weather_description, visibility
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await db
@@ -298,8 +297,7 @@ export const insertWeatherData = async (
         data.windDeg,
         data.weatherMain,
         data.weatherDescription,
-        data.visibility,
-        JSON.stringify(data),
+        data.visibility
       )
       .run();
 
@@ -315,7 +313,7 @@ export const getLatestWeatherData = async (
 ): Promise<Result<WeatherData | null>> => {
   try {
     const query = `
-      SELECT * FROM weathers
+      SELECT * FROM weather
       WHERE location_id = ?
       ORDER BY timestamp DESC
       LIMIT 1

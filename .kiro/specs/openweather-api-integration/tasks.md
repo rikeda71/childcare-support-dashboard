@@ -16,7 +16,7 @@
 ## フェーズ2: データベース準備
 
 ### 2.1 スキーマ定義
-- [ ] `migrations/001_weathers.sql` - weathersテーブル作成
+- [ ] `migrations/001_weather.sql` - weatherテーブル作成
 - [ ] `scripts/setup-d1.sh` - D1初期設定スクリプト
 
 ### 2.2 データベースクエリ

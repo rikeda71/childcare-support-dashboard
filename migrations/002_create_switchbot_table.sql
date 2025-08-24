@@ -7,12 +7,12 @@ CREATE TABLE IF NOT EXISTS switchbot_sensors (
   temperature REAL,
   humidity INTEGER,
   battery_level INTEGER,
-  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-
-  -- インデックス用
-  INDEX idx_switchbot_timestamp (timestamp),
-  INDEX idx_switchbot_device_timestamp (device_id, timestamp DESC)
+  created_at INTEGER NOT NULL DEFAULT (unixepoch())
 );
+
+-- インデックスを別途作成
+CREATE INDEX IF NOT EXISTS idx_switchbot_timestamp ON switchbot_sensors (timestamp);
+CREATE INDEX IF NOT EXISTS idx_switchbot_device_timestamp ON switchbot_sensors (device_id, timestamp DESC);
 
 -- データ保持期間管理用のビュー（直近30日分）
 CREATE VIEW IF NOT EXISTS recent_switchbot_sensors AS
