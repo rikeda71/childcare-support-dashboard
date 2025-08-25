@@ -29,13 +29,10 @@ export const collectWeather = async (env: Env): Promise<Result<void>> => {
   }
 
   // レスポンスを内部形式に変換
-  const weather = transformWeatherResponse(
-    apiResult.value,
-    config.locationName,
-  );
+  const weather = transformWeatherResponse(apiResult.value);
 
-  // データベースに保存
-  const saveResult = await insertWeather(env.DB, weather);
+  // データベースに保存（生のAPIレスポンスも保存）
+  const saveResult = await insertWeather(env.DB, weather, apiResult.value);
   if (!saveResult.ok) {
     return err(
       new Error(
@@ -47,7 +44,7 @@ export const collectWeather = async (env: Env): Promise<Result<void>> => {
   console.log(JSON.stringify({
     level: "info",
     message: "Weather collected successfully",
-    location: config.locationName,
+    location: `${config.latitude},${config.longitude}`,
     temperature: weather.temperature,
     humidity: weather.humidity,
     timestamp: weather.timestamp,

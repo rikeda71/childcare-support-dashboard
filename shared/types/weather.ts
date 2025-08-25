@@ -75,7 +75,6 @@ export interface Weather {
 export interface WeatherRecord {
   id: number;
   timestamp: number;
-  location_id: string;
   latitude: number;
   longitude: number;
   temperature: number;
@@ -92,4 +91,6 @@ export interface WeatherRecord {
   cloudiness: number;
   sunrise?: number;
   sunset?: number;
+  raw_data: string;
+  created_at: number;
 }

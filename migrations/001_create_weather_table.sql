@@ -2,7 +2,6 @@
 CREATE TABLE IF NOT EXISTS weather (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   timestamp INTEGER NOT NULL,
-  location_id TEXT NOT NULL,
   latitude REAL NOT NULL,
   longitude REAL NOT NULL,
   temperature REAL NOT NULL,
@@ -19,12 +18,13 @@ CREATE TABLE IF NOT EXISTS weather (
   cloudiness INTEGER NOT NULL,
   sunrise INTEGER,
   sunset INTEGER,
+  raw_data TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 -- インデックスを別途作成
 CREATE INDEX IF NOT EXISTS idx_weather_timestamp ON weather (timestamp);
-CREATE INDEX IF NOT EXISTS idx_weather_location_timestamp ON weather (location_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_weather_lat_lon_timestamp ON weather (latitude, longitude, timestamp DESC);
 
 -- データ保持期間管理用のビュー（直近30日分）
 CREATE VIEW IF NOT EXISTS recent_weather AS

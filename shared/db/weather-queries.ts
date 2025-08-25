@@ -9,6 +9,7 @@ import type {} from "../types/d1.d.ts";
 export const insertWeather = (
   db: D1Database,
   weather: Weather,
+  rawData?: unknown,
 ): Promise<Result<void>> =>
   tryCatch(async () => {
     const query = `
@@ -17,8 +18,8 @@ export const insertWeather = (
         temperature, feels_like, temp_min, temp_max,
         humidity, pressure, wind_speed, wind_deg,
         weather_main, weather_description, visibility, cloudiness,
-        sunrise, sunset
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        sunrise, sunset, raw_data
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await db
@@ -41,6 +42,7 @@ export const insertWeather = (
         weather.cloudiness,
         weather.sunrise || null,
         weather.sunset || null,
+        JSON.stringify(rawData || weather),
       )
       .run();
   });
