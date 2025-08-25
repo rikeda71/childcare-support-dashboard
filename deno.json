@@ -5,8 +5,7 @@
     "lint": "deno lint",
     "check": "deno check **/*.ts",
     "test:weather-api": "deno run --allow-net --allow-env --allow-read experimental/weather-api-test.ts",
-    "setup:d1": "bash scripts/setup-d1.sh",
-    "dev:worker": "bash experimental/test-worker-local.sh"
+    "setup:d1": "bash scripts/setup-d1.sh"
   },
   "imports": {
     "@std/": "https://deno.land/std@0.224.0/"

@@ -1,0 +1,107 @@
+name: Deploy Workers to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'workers/**'
+      - 'shared/**'
+      - 'migrations/**'
+      - '.github/workflows/deploy-workers.yml'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      weather-collector: ${{ steps.filter.outputs.weather-collector }}
+      migrations: ${{ steps.filter.outputs.migrations }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            weather-collector:
+              - 'workers/weather-collector/**'
+              - 'shared/**'
+            migrations:
+              - 'migrations/**'
+
+  deploy-weather-collector:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.weather-collector == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy Weather Collector Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        working-directory: workers/weather-collector
+        run: |
+          echo "🚀 Deploying Weather Collector Worker..."
+          wrangler deploy
+          echo "✅ Deployment completed"
+
+  run-migrations:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.migrations == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Run Database Migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "🔄 Running database migrations..."
+          for migration in migrations/*.sql; do
+            if [ -f "$migration" ]; then
+              echo "  Executing: $(basename "$migration")"
+              wrangler d1 execute childcare-dashboard --remote --file="$migration"
+            fi
+          done
+          echo "✅ Migrations completed"
+
+  notify-deployment:
+    needs: [deploy-weather-collector, run-migrations]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "📊 Deployment Summary"
+          echo "===================="
+          if [ "${{ needs.deploy-weather-collector.result }}" == "success" ]; then
+            echo "✅ Weather Collector: Deployed successfully"
+          elif [ "${{ needs.deploy-weather-collector.result }}" == "skipped" ]; then
+            echo "⏭️ Weather Collector: No changes detected"
+          else
+            echo "❌ Weather Collector: Deployment failed"
+          fi
+
+          if [ "${{ needs.run-migrations.result }}" == "success" ]; then
+            echo "✅ Database Migrations: Executed successfully"
+          elif [ "${{ needs.run-migrations.result }}" == "skipped" ]; then
+            echo "⏭️ Database Migrations: No changes detected"
+          else
+            echo "❌ Database Migrations: Execution failed"
+          fi
