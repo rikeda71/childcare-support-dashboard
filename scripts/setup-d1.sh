@@ -39,10 +39,10 @@ if [[ "$create_db" =~ ^[Yy]$ ]]; then
     echo "📝 データベース名を入力 (デフォルト: childcare-dashboard): "
     read -r db_name
     db_name=${db_name:-childcare-dashboard}
-    
+
     echo "Creating D1 database: $db_name"
     wrangler d1 create "$db_name"
-    
+
     echo ""
     echo "⚠️  作成されたデータベースIDをwrangler.tomlに設定してください："
     echo ""
@@ -75,12 +75,12 @@ read -r migrate_env
 if [[ "$migrate_env" =~ ^[Ll]$ ]]; then
     echo ""
     echo "🏠 ローカル環境へのマイグレーション実行..."
-    
+
     # データベース名の確認
     echo "データベース名を入力 (デフォルト: childcare-dashboard): "
     read -r local_db_name
     local_db_name=${local_db_name:-childcare-dashboard}
-    
+
     for migration in migrations/*.sql; do
         if [ -f "$migration" ]; then
             echo "  実行中: $(basename "$migration")"
@@ -88,18 +88,18 @@ if [[ "$migrate_env" =~ ^[Ll]$ ]]; then
         fi
     done
     echo "✅ ローカルマイグレーション完了"
-    
+
 elif [[ "$migrate_env" =~ ^[Pp]$ ]]; then
     echo ""
     echo "☁️  本番環境へのマイグレーション実行..."
     echo "⚠️  本番環境への変更を行います。続行しますか？ (y/N)"
     read -r confirm_prod
-    
+
     if [[ "$confirm_prod" =~ ^[Yy]$ ]]; then
         echo "データベース名を入力 (デフォルト: childcare-dashboard): "
         read -r prod_db_name
         prod_db_name=${prod_db_name:-childcare-dashboard}
-        
+
         for migration in migrations/*.sql; do
             if [ -f "$migration" ]; then
                 echo "  実行中: $(basename "$migration")"

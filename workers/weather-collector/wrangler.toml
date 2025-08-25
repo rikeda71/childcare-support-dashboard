@@ -15,8 +15,8 @@ database_id = "296de5ad-9a75-48b8-aa3e-fff0ac25edff"
 
 # 環境変数（開発用のデフォルト値）
 [vars]
-WEATHER_LATITUDE = "35.6762"   # 東京の緯度
-WEATHER_LONGITUDE = "139.6503"  # 東京の経度
+WEATHER_LATITUDE = "34.329834"   # 高松市の緯度
+WEATHER_LONGITUDE = "134.117711"  # 高松市の経度
 
 # 本番環境の秘密情報は wrangler secret で設定
 # wrangler secret put OPENWEATHER_API_KEY
