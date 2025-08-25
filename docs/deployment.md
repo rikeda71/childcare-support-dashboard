@@ -15,13 +15,14 @@ Cloudflare APIトークンの作成手順：
 3. 「Custom token」を選択して以下の権限を設定：
 
 **必要な権限：**
+
 - Account permissions:
   - `Cloudflare Workers Scripts:Edit`
   - `D1:Edit`
 - Zone permissions:
   - 不要（Workers は Zone に依存しない）
 
-4. トークンを作成し、GitHubのシークレットに `CLOUDFLARE_API_TOKEN` として保存
+1. トークンを作成し、GitHubのシークレットに `CLOUDFLARE_API_TOKEN` として保存
 
 ## ローカルデプロイ
 
@@ -59,7 +60,7 @@ mainブランチへのプッシュで自動デプロイが実行されます：
 
 ## デプロイ済みURL
 
-- Weather Collector: https://weather-collector.rikeda71.workers.dev
+- Weather Collector: `https://weather-collector.rikeda71.workers.dev`
 
 ## Cron実行スケジュール
 
@@ -84,16 +85,19 @@ Cloudflare Dashboardでログを確認：
 ### Workerが動作しない場合
 
 1. シークレット（APIキー）が設定されているか確認：
+
    ```bash
    wrangler secret list
    ```
 
 2. D1データベースが正しくバインドされているか確認：
+
    ```bash
    wrangler d1 list
    ```
 
 3. ログを確認：
+
    ```bash
    wrangler tail
    ```
