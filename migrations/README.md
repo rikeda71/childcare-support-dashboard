@@ -40,16 +40,19 @@ wrangler d1 execute childcare-dashboard --local --file=./migrations/003_create_c
 ## テーブル構造
 
 ### weather テーブル
+
 - 気象データを保存
 - 30日間のデータ保持（古いデータは自動削除）
 - location_idとtimestampでインデックス化
 
 ### switchbot_sensors テーブル
+
 - SwitchBotセンサーデータを保存
 - 30日間のデータ保持（古いデータは自動削除）
 - device_idとtimestampでインデックス化
 
 ### cleanup_logs テーブル
+
 - データクリーンアップの実行ログ
 - 削除されたレコード数と期間を記録
 

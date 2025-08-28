@@ -67,6 +67,7 @@ Managed by `/kiro:steering` command. Updates here reflect command changes.
 - `structure.md`: Always included - File organization and code patterns
 
 ### Custom Steering Files
+
 <!-- Added by /kiro:steering-custom command -->
 <!-- Format:
 - `filename.md`: Mode - Pattern(s) - Description

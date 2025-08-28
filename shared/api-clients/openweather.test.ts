@@ -39,14 +39,13 @@ const mockApiResponse: OpenWeatherResponse = {
 };
 
 Deno.test("transformWeatherResponse converts API response correctly", () => {
-  const result = transformWeatherResponse(mockApiResponse, "Tokyo");
-  
+  const result = transformWeatherResponse(mockApiResponse);
+
   assertEquals(result.temperature, 25.5);
   assertEquals(result.humidity, 65);
   assertEquals(result.pressure, 1013);
   assertEquals(result.windSpeed, 3.5);
   assertEquals(result.windDeg, 180);
-  assertEquals(result.locationId, "Tokyo");
   assertEquals(result.weatherMain, "Clear");
   assertEquals(result.weatherDescription, "clear sky");
   assertEquals(result.visibility, 10000);
@@ -60,16 +59,16 @@ Deno.test("transformWeatherResponse handles missing weather array", () => {
     ...mockApiResponse,
     weather: [],
   };
-  
-  const result = transformWeatherResponse(incompleteResponse, "Tokyo");
-  
+
+  const result = transformWeatherResponse(incompleteResponse);
+
   assertEquals(result.weatherMain, "Unknown");
   assertEquals(result.weatherDescription, "");
 });
 
 Deno.test("transformWeatherResponse converts timestamps to milliseconds", () => {
-  const result = transformWeatherResponse(mockApiResponse, "Tokyo");
-  
+  const result = transformWeatherResponse(mockApiResponse);
+
   // API returns Unix seconds, we should have milliseconds
   assertEquals(result.timestamp, 1700000000 * 1000);
   assertEquals(result.sunrise, 1699999000 * 1000);
