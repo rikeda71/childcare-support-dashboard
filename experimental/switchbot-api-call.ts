@@ -1,5 +1,5 @@
-import { parseArgs } from "std/cli/parse_args.ts";
-import { load } from "std/dotenv/mod.ts";
+import { parseArgs } from "@std/cli/parse_args.ts";
+import { load } from "@std/dotenv/mod.ts";
 
 /**
  * リクエストに必要な署名を生成する
@@ -62,7 +62,7 @@ if (!path) {
 
 const url = `${BASE_URL}${path}`;
 const uuid = crypto.randomUUID();
-const time = Temporal.Now.instant().epochMilliseconds;
+const time = Date.now();
 
 try {
   const response = await fetch(url, {
