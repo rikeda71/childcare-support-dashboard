@@ -12,19 +12,19 @@ graph LR
         PL[ぴよログアプリ]
         AUT[自動化ツール<br/>ADB/XCUITest]
     end
-    
+
     subgraph "Cloud Storage"
         GD[Google Drive]
     end
-    
+
     subgraph "Cloudflare Workers"
         PC[piyolog-processor<br/>10分ごと実行]
     end
-    
+
     subgraph "Storage"
         D1[(Cloudflare D1)]
     end
-    
+
     PL -->|自動エクスポート| AUT
     AUT -->|アップロード| GD
     GD -->|10分ごと取得| PC
