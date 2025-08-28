@@ -7,23 +7,23 @@ graph LR
     subgraph "Cloudflare Workers"
         WC[weather-collector<br/>Worker]
     end
-    
+
     subgraph "External"
         OW[OpenWeatherMap API]
     end
-    
+
     subgraph "Storage"
         D1[(Cloudflare D1)]
     end
-    
+
     subgraph "Config"
         ENV[環境変数<br/>- API Key<br/>- 緯度経度]
     end
-    
+
     ENV --> WC
     OW -->|HTTP/JSON| WC
     WC -->|SQL| D1
-    
+
     CRON[Cron Trigger<br/>毎時実行] -->|0 * * * *| WC
 ```
 
@@ -72,7 +72,7 @@ export default {
       throw error; // Cloudflareに失敗を通知
     }
   },
-  
+
   // デバッグ用の手動実行エンドポイント
   async fetch(
     request: Request,
@@ -82,7 +82,7 @@ export default {
     if (request.method !== "POST") {
       return new Response("Method not allowed", { status: 405 });
     }
-    
+
     try {
       await collectWeatherData(env);
       return new Response("Weather data collected successfully", { status: 200 });
@@ -105,20 +105,20 @@ import type { WeatherData } from "@shared/types/weather.ts";
 export const collectWeatherData = async (env: Env): Promise<void> => {
   // 1. 設定値の取得とバリデーション
   const config = getWeatherConfig(env);
-  
+
   // 2. APIからデータ取得
   const apiResponse = await fetchWeatherData({
     apiKey: env.OPENWEATHER_API_KEY,
     latitude: config.latitude,
     longitude: config.longitude,
   });
-  
+
   // 3. データ変換
   const weatherData = transformToWeatherData(apiResponse, config);
-  
+
   // 4. データベースに保存
   const result = await insertWeatherData(env.DB, weatherData);
-  
+
   if (!result.ok) {
     throw new Error(`Failed to save weather data: ${result.error.message}`);
   }
@@ -127,15 +127,14 @@ export const collectWeatherData = async (env: Env): Promise<void> => {
 const getWeatherConfig = (env: Env) => {
   const latitude = parseFloat(env.WEATHER_LATITUDE);
   const longitude = parseFloat(env.WEATHER_LONGITUDE);
-  
+
   if (isNaN(latitude) || isNaN(longitude)) {
     throw new Error("Invalid latitude or longitude configuration");
   }
-  
+
   return {
     latitude,
     longitude,
-    locationName: env.LOCATION_NAME || `${latitude},${longitude}`,
   };
 };
 
@@ -145,7 +144,6 @@ const transformToWeatherData = (
 ): WeatherData => {
   return {
     timestamp: response.dt * 1000, // Unix timestamp to milliseconds
-    locationId: config.locationName,
     latitude: config.latitude,
     longitude: config.longitude,
     temperature: response.main.temp,
@@ -182,22 +180,22 @@ export const fetchWeather = async (
   params: FetchWeatherParams,
 ): Promise<OpenWeatherResponse> => {
   const url = buildWeatherApiUrl(params);
-  
+
   const response = await fetchWithRetry(url, {
     maxRetries: 3,
     retryDelay: 1000,
   });
-  
+
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status} ${response.statusText}`);
   }
-  
+
   const data = await response.json();
-  
+
   if (!validateApiResponse(data)) {
     throw new Error("Invalid API response format");
   }
-  
+
   return data as OpenWeatherResponse;
 };
 
@@ -210,7 +208,7 @@ const buildWeatherApiUrl = (params: FetchWeatherParams): string => {
     units: "metric",
     lang: "ja",
   });
-  
+
   return `${baseUrl}?${searchParams.toString()}`;
 };
 
@@ -219,29 +217,29 @@ const fetch = async (
   options: { maxRetries: number; retryDelay: number },
 ): Promise<Response> => {
   let lastError: Error | null = null;
-  
+
   for (let i = 0; i <= options.maxRetries; i++) {
     try {
       const response = await fetch(url, {
         signal: AbortSignal.timeout(5000), // 5秒タイムアウト
       });
-      
+
       if (response.ok || response.status < 500) {
         return response; // 成功または4xxエラーはリトライしない
       }
-      
+
       lastError = new Error(`HTTP ${response.status}`);
     } catch (error) {
       lastError = error as Error;
     }
-    
+
     if (i < options.maxRetries) {
       // 指数バックオフ
       const delay = options.retryDelay * Math.pow(2, i);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  
+
   throw lastError || new Error("Request failed");
 };
 
@@ -249,9 +247,9 @@ const validateApiResponse = (data: unknown): boolean => {
   if (typeof data !== "object" || data === null) {
     return false;
   }
-  
+
   const response = data as any;
-  
+
   return (
     typeof response.main === "object" &&
     typeof response.main.temp === "number" &&
@@ -274,15 +272,14 @@ export const insertWeatherData = async (
 ): Promise<Result<void>> => {
   try {
     const query = `
-      INSERT INTO weather_data (
-        timestamp, location_id, latitude, longitude,
+      INSERT INTO weather (
+        timestamp, latitude, longitude,
         temperature, feels_like, temp_min, temp_max,
         humidity, pressure, wind_speed, wind_deg,
-        weather_main, weather_description, visibility,
-        raw_data
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        weather_main, weather_description, visibility
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    
+
     await db
       .prepare(query)
       .bind(
@@ -300,11 +297,10 @@ export const insertWeatherData = async (
         data.windDeg,
         data.weatherMain,
         data.weatherDescription,
-        data.visibility,
-        JSON.stringify(data),
+        data.visibility
       )
       .run();
-    
+
     return { ok: true, value: undefined };
   } catch (error) {
     return { ok: false, error: error as Error };
@@ -317,31 +313,30 @@ export const getLatestWeatherData = async (
 ): Promise<Result<WeatherData | null>> => {
   try {
     const query = `
-      SELECT * FROM weather_data
+      SELECT * FROM weather
       WHERE location_id = ?
       ORDER BY timestamp DESC
       LIMIT 1
     `;
-    
+
     const result = await db
       .prepare(query)
       .bind(locationId)
       .first();
-    
+
     if (!result) {
       return { ok: true, value: null };
     }
-    
+
     return { ok: true, value: parseWeatherRecord(result) };
   } catch (error) {
     return { ok: false, error: error as Error };
   }
 };
 
-const parseWeatherRecord = (record: any): WeatherData => {
+const parseWeatherRecord = (record: any): Weather => {
   return {
     timestamp: record.timestamp,
-    locationId: record.location_id,
     latitude: record.latitude,
     longitude: record.longitude,
     temperature: record.temperature,

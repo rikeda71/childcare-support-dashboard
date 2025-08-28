@@ -1,0 +1,76 @@
+name: Validate Workers
+
+on:
+  pull_request:
+    paths:
+      - 'workers/**'
+      - 'shared/**'
+      - 'migrations/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/deno
+            ~/.deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      - name: Format Check
+        run: deno fmt --check
+
+      - name: Lint
+        run: deno lint
+
+      - name: Type Check
+        run: deno check **/*.ts
+
+      - name: Run Tests
+        run: deno test --allow-all
+
+  validate-sql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SQLite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlite3
+
+      - name: Validate SQL Migrations
+        run: |
+          echo "🔍 Validating SQL migrations..."
+
+          # Create a temporary database
+          sqlite3 temp.db "SELECT 'Database created';"
+
+          # Test each migration
+          for migration in migrations/*.sql; do
+            if [ -f "$migration" ]; then
+              echo "  Testing: $(basename "$migration")"
+              sqlite3 temp.db < "$migration"
+              if [ $? -eq 0 ]; then
+                echo "    ✅ Valid SQL"
+              else
+                echo "    ❌ Invalid SQL"
+                exit 1
+              fi
+            fi
+          done
+
+          # Clean up
+          rm temp.db
+          echo "✅ All migrations are valid"

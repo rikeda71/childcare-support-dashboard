@@ -30,8 +30,8 @@ graph TB
 
     SW -->|5分ごと| SC
     OW -->|1時間ごと| WC
-    GD -->|日次| PC
-    PL -->|日次| PC
+    GD -->|10分ごと| PC
+    PL -->|日時| GD
 
     SC --> D1
     WC --> D1

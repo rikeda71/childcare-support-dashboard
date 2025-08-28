@@ -3,14 +3,18 @@
 ## コア技術スタック
 
 ### ランタイム＆デプロイメント
+
 - **Deno**: 開発とテストのプライマリランタイム
 - **Cloudflare Workers**: 本番デプロイメントプラットフォーム
 - **Cloudflare D1**: SQLiteベースの時系列データストレージ
 
 ### データ可視化
+
 - **Grafana**: 時系列データの可視化とモニタリング
+  - Grafana Cloud を利用
 
 ### 外部API
+
 - **SwitchBot API**: スマートデバイス管理
 - **OpenWeatherMap API**: 気象データ統合
 - **Google Drive API**: ぴよログデータ同期
@@ -18,15 +22,19 @@
 ## 開発標準
 
 ### コードスタイル＆フォーマッティング
+
 - **Deno標準**: Denoの組み込みフォーマッターとリンターに従う
+
   ```bash
   deno fmt    # コードフォーマット
   deno lint   # コード品質チェック
   ```
+
 - **Import Maps**: deno.jsonで依存関係管理
 - **package.json不使用**: DenoのURLベースインポートを活用
 
 ### 命名規則（Readable Code原則）
+
 - **明確で具体的な名前**: `getData` → `fetchWeather`
 - **不要な接尾辞を避ける**: `Weather` → `weather`
 - **ブール値は疑問形**: `isValid`, `hasError`, `canRetry`
@@ -37,12 +45,14 @@
 ### プログラミングパラダイム
 
 #### 関数型プログラミングファースト
+
 - **純粋関数**: 副作用のない関数を優先
 - **不変性**: `const`宣言を使用し、ミューテーションを避ける
 - **関数合成**: シンプルな関数から複雑なロジックを構築
 - **クラス不使用**: クラスベースのOOPパターンを避ける
 
 #### 型駆動開発
+
 ```typescript
 // ドメイン型
 export interface Weather {
@@ -69,6 +79,7 @@ export const processWeather: DataProcessor<Weather, ProcessedData> =
 ### Cloudflare D1設計原則
 
 #### 時系列データ構造
+
 ```sql
 -- 効率的なクエリのための時間パーティショニング
 CREATE TABLE weather_metrics (
@@ -84,6 +95,7 @@ CREATE INDEX idx_weather_timestamp ON weather_metrics(timestamp);
 ```
 
 #### ストレージ管理
+
 - **D1制限**: データベースあたり10GB、クエリ結果あたり500MB
 - **保持ポリシー**:
   - ホットデータ: 直近7日間（フル解像度）
@@ -92,6 +104,7 @@ CREATE INDEX idx_weather_timestamp ON weather_metrics(timestamp);
   - 自動削除: 90日以上古いデータ
 
 #### データ保持の実装
+
 ```typescript
 interface RetentionPolicy {
   readonly hotDataDays: 7;
@@ -113,6 +126,7 @@ type PurgeOldData = (
 ## API設計パターン
 
 ### 関数型APIクライアント
+
 ```typescript
 // 依存性注入を使用した純粋関数としてのAPIクライアント
 interface ApiConfig {
@@ -133,6 +147,7 @@ const createWeatherClient: ApiClient<WeatherResponse> =
 ```
 
 ### エラーハンドリング
+
 ```typescript
 // 明示的なエラーハンドリングのためのResult型
 type Result<T, E = Error> =
@@ -145,6 +160,7 @@ type ApiCall<T> = () => Promise<Result<T>>;
 ## Cloudflare Workers統合
 
 ### Worker構造
+
 ```typescript
 interface Env {
   readonly DB: D1Database;
@@ -172,6 +188,7 @@ export default {
 ```
 
 ### データ収集のためのCronジョブ
+
 ```toml
 # wrangler.toml
 [triggers]
@@ -186,6 +203,7 @@ crons = [
 ## テスト戦略
 
 ### Denoテストフレームワーク
+
 ```typescript
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
@@ -204,6 +222,7 @@ Deno.test("processWeatherが正しく変換する", () => {
 ```
 
 ### テスト構成
+
 - ユニットテスト: ソースファイルの隣（`*.test.ts`）
 - 統合テスト: `tests/integration/`
 - E2Eテスト: `tests/e2e/`
@@ -211,11 +230,13 @@ Deno.test("processWeatherが正しく変換する", () => {
 ## セキュリティ考慮事項
 
 ### 環境変数
+
 - APIキーにはCloudflare Secretsを使用
 - クレデンシャルをコミットしない
 - すべての外部入力を検証
 
 ### データプライバシー
+
 - 個人データを匿名化
 - データアクセス制御の実装
 - 定期的なセキュリティ監査
@@ -223,11 +244,13 @@ Deno.test("processWeatherが正しく変換する", () => {
 ## パフォーマンス最適化
 
 ### クエリ最適化
+
 - プリペアドステートメントを使用
 - 大量データのバッチインサート
 - クエリ結果のキャッシング実装
 
 ### Worker最適化
+
 - コールドスタートの最小化
 - キャッシングにWorkers KVを使用
 - リクエスト結合の実装
@@ -235,12 +258,14 @@ Deno.test("processWeatherが正しく変換する", () => {
 ## モニタリング＆可観測性
 
 ### メトリクス収集
+
 - Worker実行時間
 - APIレスポンスタイム
 - データベースクエリパフォーマンス
 - データ取り込み率
 
 ### アラート
+
 - API呼び出し失敗
 - ストレージ閾値警告
 - データ保持違反

@@ -1,0 +1,22 @@
+name = "weather-collector"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+account_id = "2e20678de4b537ee345e20a75acaeb16"
+
+# Cron設定: 毎時0分に実行
+[triggers]
+crons = ["0 * * * *"]
+
+# D1データベース設定
+[[d1_databases]]
+binding = "DB"
+database_name = "childcare-dashboard"
+database_id = "296de5ad-9a75-48b8-aa3e-fff0ac25edff"
+
+# 環境変数（開発用のデフォルト値）
+[vars]
+WEATHER_LATITUDE = "34.329834"   # 高松市の緯度
+WEATHER_LONGITUDE = "134.117711"  # 高松市の経度
+
+# 本番環境の秘密情報は wrangler secret で設定
+# wrangler secret put OPENWEATHER_API_KEY
