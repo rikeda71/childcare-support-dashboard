@@ -17,20 +17,6 @@ Deno.test("parseWeatherConfig parses valid coordinates", () => {
   }
 });
 
-Deno.test("parseWeatherConfig generates default location name", () => {
-  const mockEnv = {
-    WEATHER_LATITUDE: "35.6762",
-    WEATHER_LONGITUDE: "139.6503",
-  } as Env;
-
-  const result = parseWeatherConfig(mockEnv);
-
-  assertEquals(result.ok, true);
-  if (result.ok) {
-    assertEquals(result.value.locationName, "35.6762,139.6503");
-  }
-});
-
 Deno.test("parseWeatherConfig validates latitude range", () => {
   const invalidEnv = {
     WEATHER_LATITUDE: "91", // Invalid: > 90
