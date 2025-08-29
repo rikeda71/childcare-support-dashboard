@@ -8,7 +8,8 @@
     "setup:d1": "bash scripts/setup-d1.sh"
   },
   "imports": {
-    "@std/": "https://deno.land/std@0.224.0/"
+    "@std/": "https://deno.land/std@0.224.0/",
+    "@cloudflare/workers-types": "npm:@cloudflare/workers-types@^4.20241127.0"
   },
   "fmt": {
     "useTabs": false,
