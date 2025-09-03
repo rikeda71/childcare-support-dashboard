@@ -8,6 +8,8 @@ export interface Env {
   readonly OPENWEATHER_API_KEY: string;
   readonly WEATHER_LATITUDE: string;
   readonly WEATHER_LONGITUDE: string;
+  readonly SWITCHBOT_TOKEN: string;
+  readonly SWITCHBOT_CLIENT_SECRET: string;
 }
 
 /**

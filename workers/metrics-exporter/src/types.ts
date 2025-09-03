@@ -22,3 +22,12 @@ export interface StatsMetrics {
   minHumidity: number;
   dataPoints: number;
 }
+
+export interface IndoorMetrics {
+  timestamp: number;
+  deviceId: string;
+  deviceName: string;
+  temperature: number;
+  humidity: number;
+  battery?: number;
+}
