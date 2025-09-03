@@ -25,7 +25,7 @@ export function handleHealthCheck(): Response {
       "Content-Type": "text/plain",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }
@@ -46,7 +46,7 @@ export function handleSearchRequest(): Response {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }
@@ -84,7 +84,7 @@ export async function handleQueryRequest(
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
     });
   } catch (error) {
@@ -95,7 +95,7 @@ export async function handleQueryRequest(
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
     });
   }
@@ -169,4 +169,3 @@ function extractMetricValue(metrics: WeatherMetrics, metricName: string): number
       return 0;
   }
 }
-

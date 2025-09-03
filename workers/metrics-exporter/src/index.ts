@@ -1,10 +1,6 @@
 import type { Env } from "./types.ts";
 import type { ExecutionContext } from "@cloudflare/workers-types";
-import {
-  handleHealthCheck,
-  handleQueryRequest,
-  handleSearchRequest,
-} from "./json-api.ts";
+import { handleHealthCheck, handleQueryRequest, handleSearchRequest } from "./json-api.ts";
 
 export default {
   async fetch(
