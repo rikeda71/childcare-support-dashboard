@@ -74,9 +74,7 @@ export async function handleQueryRequest(
           results.push({
             target: target.target,
             datapoints: indoorData.value.map((m) => {
-              const value = target.target === "indoor_temperature"
-                ? m.temperature
-                : m.humidity;
+              const value = target.target === "indoor_temperature" ? m.temperature : m.humidity;
               return [value, m.timestamp];
             }),
           });

@@ -72,7 +72,7 @@ export const insertIndoorSensorDataBatch = async (
           sensorData.humidity,
           sensorData.battery || null,
           sensorData.raw_data,
-        ),
+        )
     );
 
     await db.batch(statements);

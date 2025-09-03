@@ -73,7 +73,10 @@ export interface IndoorSensorData {
 /**
  * SwitchBot API v1.1の認証ヘッダーを生成
  */
-const generateAuthHeaders = async (token: string, secret: string): Promise<Record<string, string>> => {
+const generateAuthHeaders = async (
+  token: string,
+  secret: string,
+): Promise<Record<string, string>> => {
   const t = Date.now();
   const nonce = "";
   const data = token + t + nonce;
@@ -134,9 +137,7 @@ export const fetchSwitchBotDevices = async (
     return ok(data);
   } catch (error) {
     return err(
-      error instanceof Error
-        ? error
-        : new Error(`Unknown error: ${String(error)}`),
+      error instanceof Error ? error : new Error(`Unknown error: ${String(error)}`),
     );
   }
 };
@@ -173,9 +174,7 @@ export const fetchSwitchBotDeviceStatus = async (
     return ok(data);
   } catch (error) {
     return err(
-      error instanceof Error
-        ? error
-        : new Error(`Unknown error: ${String(error)}`),
+      error instanceof Error ? error : new Error(`Unknown error: ${String(error)}`),
     );
   }
 };
