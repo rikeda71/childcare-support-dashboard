@@ -1,13 +1,100 @@
 import type { Env, WeatherConfig } from "./types.ts";
 import { fetchWeather, transformWeatherResponse } from "../../../shared/api-clients/openweather.ts";
+import { fetchIndoorSensors } from "../../../shared/api-clients/switchbot.ts";
 import { insertWeather } from "../../../shared/db/weather-queries.ts";
+import { insertIndoorSensorDataBatch } from "../../../shared/db/indoor-sensor-queries.ts";
 import type { Result } from "../../../shared/types/result.ts";
 import { err, ok } from "../../../shared/types/result.ts";
 
 /**
- * 気象データを収集してデータベースに保存する
+ * 室内センサーデータを収集してデータベースに保存する
+ */
+const collectIndoorSensors = async (env: Env): Promise<Result<void>> => {
+  // SwitchBot APIから室内センサーデータを取得
+  const sensorsResult = await fetchIndoorSensors({
+    token: env.SWITCHBOT_TOKEN,
+    secret: env.SWITCHBOT_CLIENT_SECRET,
+  });
+
+  if (!sensorsResult.ok) {
+    return err(
+      new Error(
+        `Failed to fetch indoor sensor data: ${sensorsResult.error.message}`,
+      ),
+    );
+  }
+
+  const sensorDataList = sensorsResult.value;
+
+  if (sensorDataList.length === 0) {
+    console.log(JSON.stringify({
+      level: "info",
+      message: "No indoor sensors found",
+      timestamp: Date.now(),
+    }));
+    return ok(undefined);
+  }
+
+  // データベースに保存
+  const sensorRecords = sensorDataList.map((sensor) => ({
+    timestamp: sensor.timestamp,
+    device_id: sensor.deviceId,
+    device_name: sensor.deviceName,
+    temperature: sensor.temperature,
+    humidity: sensor.humidity,
+    battery: sensor.battery,
+    raw_data: JSON.stringify(sensor),
+  }));
+
+  const saveResult = await insertIndoorSensorDataBatch(env.DB, sensorRecords);
+  if (!saveResult.ok) {
+    return err(
+      new Error(
+        `Failed to save indoor sensor data: ${saveResult.error.message}`,
+      ),
+    );
+  }
+
+  console.log(JSON.stringify({
+    level: "info",
+    message: "Indoor sensors collected successfully",
+    devices: sensorDataList.length,
+    timestamp: Date.now(),
+  }));
+
+  return ok(undefined);
+};
+
+/**
+ * 気象データと室内センサーデータを収集してデータベースに保存する
  */
 export const collectWeather = async (env: Env): Promise<Result<void>> => {
+  // 屋外気象データと室内センサーデータを並行して収集
+  const [weatherResult, indoorResult] = await Promise.all([
+    collectOutdoorWeather(env),
+    collectIndoorSensors(env),
+  ]);
+
+  // エラーがあればまとめて返す
+  const errors: string[] = [];
+  if (!weatherResult.ok) {
+    errors.push(`Weather: ${weatherResult.error.message}`);
+  }
+  if (!indoorResult.ok) {
+    errors.push(`Indoor: ${indoorResult.error.message}`);
+  }
+
+  if (errors.length > 0) {
+    return err(new Error(`Collection errors: ${errors.join("; ")}`));
+  }
+
+  return ok(undefined);
+};
+
+/**
+ * 屋外気象データを収集してデータベースに保存する
+ */
+const collectOutdoorWeather = async (env: Env): Promise<Result<void>> => {
   const configResult = parseWeatherConfig(env);
   if (!configResult.ok) {
     return err(configResult.error);

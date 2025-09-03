@@ -1,4 +1,4 @@
-import type { Env, WeatherMetrics } from "./types.ts";
+import type { Env, IndoorMetrics, WeatherMetrics } from "./types.ts";
 import { err, ok, type Result } from "../../../shared/types/result.ts";
 
 interface GrafanaQuery {
@@ -38,6 +38,8 @@ export function handleSearchRequest(): Response {
     "wind_speed",
     "visibility",
     "cloudiness",
+    "indoor_temperature",
+    "indoor_humidity",
   ];
 
   return new Response(JSON.stringify(metrics), {
@@ -66,15 +68,30 @@ export async function handleQueryRequest(
     const results: GrafanaTimeSeries[] = [];
 
     for (const target of body.targets) {
-      const data = await queryMetricData(env, from, to);
-      if (data.ok) {
-        results.push({
-          target: target.target,
-          datapoints: data.value.map((m) => {
-            const value = extractMetricValue(m, target.target);
-            return [value, m.timestamp];
-          }),
-        });
+      if (target.target.startsWith("indoor_")) {
+        const indoorData = await queryIndoorMetricData(env, from, to);
+        if (indoorData.ok) {
+          results.push({
+            target: target.target,
+            datapoints: indoorData.value.map((m) => {
+              const value = target.target === "indoor_temperature"
+                ? m.temperature
+                : m.humidity;
+              return [value, m.timestamp];
+            }),
+          });
+        }
+      } else {
+        const data = await queryMetricData(env, from, to);
+        if (data.ok) {
+          results.push({
+            target: target.target,
+            datapoints: data.value.map((m) => {
+              const value = extractMetricValue(m, target.target);
+              return [value, m.timestamp];
+            }),
+          });
+        }
       }
     }
 
@@ -98,6 +115,54 @@ export async function handleQueryRequest(
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
     });
+  }
+}
+
+async function queryIndoorMetricData(
+  env: Env,
+  fromMs: number,
+  toMs: number,
+): Promise<Result<IndoorMetrics[]>> {
+  try {
+    const result = await env.DB
+      .prepare(`
+        WITH hourly_data AS (
+          SELECT
+            strftime('%Y-%m-%d %H:00:00', datetime(timestamp/1000, 'unixepoch')) as hour,
+            timestamp,
+            device_id as deviceId,
+            device_name as deviceName,
+            temperature,
+            humidity,
+            battery,
+            ROW_NUMBER() OVER (
+              PARTITION BY strftime('%Y-%m-%d %H', datetime(timestamp/1000, 'unixepoch'))
+              ORDER BY timestamp DESC
+            ) as rn
+          FROM indoor_sensors
+          WHERE timestamp BETWEEN ? AND ?
+        )
+        SELECT
+          timestamp,
+          deviceId,
+          deviceName,
+          temperature,
+          humidity,
+          battery
+        FROM hourly_data
+        WHERE rn = 1
+        ORDER BY timestamp ASC
+      `)
+      .bind(fromMs, toMs)
+      .all<IndoorMetrics>();
+
+    if (!result.results) {
+      return err(new Error("No indoor data available"));
+    }
+
+    return ok(result.results);
+  } catch (error) {
+    return err(new Error(`Indoor query error: ${error}`));
   }
 }
 
