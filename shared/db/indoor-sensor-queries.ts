@@ -49,7 +49,7 @@ export const insertIndoorSensorData = (
 /**
  * 複数の室内センサーデータをバッチで保存する
  */
-export const insertIndoorSensorDataBatch = async (
+export const insertIndoorSensorsBatch = (
   db: D1Database,
   sensorDataList: Omit<IndoorSensorRecord, "id" | "created_at">[],
 ): Promise<Result<void>> =>

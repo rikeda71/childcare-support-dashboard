@@ -2,7 +2,7 @@ import type { Env, WeatherConfig } from "./types.ts";
 import { fetchWeather, transformWeatherResponse } from "../../../shared/api-clients/openweather.ts";
 import { fetchIndoorSensors } from "../../../shared/api-clients/switchbot.ts";
 import { insertWeather } from "../../../shared/db/weather-queries.ts";
-import { insertIndoorSensorDataBatch } from "../../../shared/db/indoor-sensor-queries.ts";
+import { insertIndoorSensorsBatch } from "../../../shared/db/indoor-sensor-queries.ts";
 import type { Result } from "../../../shared/types/result.ts";
 import { err, ok } from "../../../shared/types/result.ts";
 
@@ -46,7 +46,7 @@ const collectIndoorSensors = async (env: Env): Promise<Result<void>> => {
     raw_data: JSON.stringify(sensor),
   }));
 
-  const saveResult = await insertIndoorSensorDataBatch(env.DB, sensorRecords);
+  const saveResult = await insertIndoorSensorsBatch(env.DB, sensorRecords);
   if (!saveResult.ok) {
     return err(
       new Error(
