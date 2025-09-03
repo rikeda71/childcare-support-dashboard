@@ -2,6 +2,7 @@
 declare global {
   interface D1Database {
     prepare(query: string): D1PreparedStatement;
+    batch<T = unknown>(statements: D1PreparedStatement[]): Promise<T[]>;
   }
 
   interface D1PreparedStatement {
