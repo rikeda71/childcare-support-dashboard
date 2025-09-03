@@ -21,7 +21,12 @@ interface GrafanaTimeSeries {
 export function handleHealthCheck(): Response {
   return new Response("OK", {
     status: 200,
-    headers: { "Content-Type": "text/plain" },
+    headers: {
+      "Content-Type": "text/plain",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    },
   });
 }
 
@@ -37,7 +42,12 @@ export function handleSearchRequest(): Response {
 
   return new Response(JSON.stringify(metrics), {
     status: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    },
   });
 }
 
@@ -73,13 +83,20 @@ export async function handleQueryRequest(
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
       },
     });
   } catch (error) {
     console.error("Query error:", error);
     return new Response(JSON.stringify({ error: "Query failed" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      },
     });
   }
 }
