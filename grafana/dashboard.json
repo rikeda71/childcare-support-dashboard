@@ -1,0 +1,761 @@
+{
+  "title": "保育施設環境モニタリング",
+  "uid": "childcare-final-solution",
+  "tags": ["childcare", "weather", "monitoring"],
+  "timezone": "Asia/Tokyo",
+  "schemaVersion": 38,
+  "version": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "editable": true,
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "type": "stat",
+      "title": "現在の温度",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "dataframe",
+          "parser": "backend",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"temperature\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints.{\"value\": $[0], \"time\": $[1]}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "yellow",
+                "value": 28
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "fields": "/^value$/",
+          "calcs": ["lastNotNull"]
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+    {
+      "id": 2,
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "type": "stat",
+      "title": "現在の湿度",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "dataframe",
+          "parser": "backend",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"humidity\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints.{\"value\": $[0], \"time\": $[1]}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "green",
+                "value": 45
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 65
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "fields": "/^value$/",
+          "calcs": ["lastNotNull"]
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+    {
+      "id": 3,
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "type": "stat",
+      "title": "気圧",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "dataframe",
+          "parser": "backend",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"pressure\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints.{\"value\": $[0], \"time\": $[1]}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "pressurehpa",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "fields": "/^value$/",
+          "calcs": ["lastNotNull"]
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 4,
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "type": "stat",
+      "title": "風速",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "dataframe",
+          "parser": "backend",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"wind_speed\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints.{\"value\": $[0], \"time\": $[1]}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "velocityms",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "fields": "/^value$/",
+          "calcs": ["lastNotNull"]
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 5,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "type": "timeseries",
+      "title": "温度推移 (24時間)",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"temperature\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints",
+          "columns": [
+            {
+              "selector": "[0]",
+              "text": "Temperature",
+              "type": "number"
+            },
+            {
+              "selector": "[1]",
+              "text": "Time",
+              "type": "timestamp_epoch_ms"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "decimals": 1,
+          "displayName": "温度",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "温度 (℃)",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 28
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "min", "last"]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "type": "timeseries",
+      "title": "湿度推移 (24時間)",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"humidity\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints",
+          "columns": [
+            {
+              "selector": "[0]",
+              "text": "Humidity",
+              "type": "number"
+            },
+            {
+              "selector": "[1]",
+              "text": "Time",
+              "type": "timestamp_epoch_ms"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "displayName": "湿度",
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "湿度 (%)",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "green",
+                "value": 45
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 65
+              }
+            ]
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "min", "last"]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "type": "timeseries",
+      "title": "気圧・風速推移 (24時間)",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${datasource}"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"pressure\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints",
+          "columns": [
+            {
+              "selector": "[0]",
+              "text": "Pressure",
+              "type": "number"
+            },
+            {
+              "selector": "[1]",
+              "text": "Time",
+              "type": "timestamp_epoch_ms"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${datasource}"
+          },
+          "refId": "B",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://childcare-metrics-exporter.rikeda71.workers.dev/query",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"targets\":[{\"target\":\"wind_speed\",\"type\":\"timeserie\"}]}",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "root_selector": "$[0].datapoints",
+          "columns": [
+            {
+              "selector": "[0]",
+              "text": "WindSpeed",
+              "type": "number"
+            },
+            {
+              "selector": "[1]",
+              "text": "Time",
+              "type": "timestamp_epoch_ms"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pressure"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "pressurehpa"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "displayName",
+                "value": "気圧"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WindSpeed"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocityms"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "displayName",
+                "value": "風速"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        }
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Data Source",
+        "type": "datasource",
+        "query": "yesoreyeram-infinity-datasource",
+        "regex": "childcare-datasource",
+        "current": {
+          "selected": false,
+          "text": "childcare-datasource",
+          "value": "childcare-datasource"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "refresh": 1,
+        "skipUrlSync": false
+      }
+    ]
+  }
+}

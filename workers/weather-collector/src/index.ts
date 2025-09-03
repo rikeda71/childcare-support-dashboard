@@ -1,4 +1,5 @@
 import type { Env } from "./types.ts";
+import type { ExecutionContext } from "@cloudflare/workers-types";
 import { collectWeather } from "./handler.ts";
 
 export default {
